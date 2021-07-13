@@ -41,3 +41,29 @@ window.addEventListener('click', (e) => {
     }
   }
 });
+
+window.addEventListener('mouseover', (e) => {
+  const nodePath = (e as any).path;
+  let targetNode;
+  // 寻找第一个由_vc-path属性的元素
+  for (let i = 0; i < nodePath.length; i++) {
+    const node = nodePath[i];
+    if (node.hasAttribute && node.hasAttribute('_vc-path')) {
+      targetNode = node;
+      break;
+    }
+  }
+  if (targetNode) {
+    // 检查子元素是否已插入_vc-cover，防止重复插入
+    const children = targetNode.children;
+    if (children.length) {
+      const lastChild = children[children.length - 1];
+      if (lastChild.className === '_vc-cover') {
+        return;
+      }
+    }
+    const cover = document.createElement('div');
+    cover.setAttribute('class', '_vc-cover');
+    targetNode.appendChild(cover);
+  }
+});

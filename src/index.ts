@@ -21,10 +21,7 @@ class TrackCodePlugin {
           'html-webpack-plugin-after-html-processing',
           (data) => {
             // html-webpack-plugin编译后的内容，注入代码
-            data.html = data.html.replace(
-              '</body>',
-              `<script>\n${code}\n</script>\n</body>`
-            );
+            data.html = data.html.replace('</body>', `${code}\n</body>`);
           }
         );
       });

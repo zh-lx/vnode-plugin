@@ -23,11 +23,12 @@ const injectCode = (port, options) => {
           `'__CODE__RECORD__', ${recordArr.join(',')}`
         )
       : DefaultInjectCode;
-  return code
+  const _code = code
     .replace('__FILE__', InjectPathName)
     .replace('__LINE__', InjectLineName)
     .replace('__COLUMN__', InjectColumnName)
     .replace('__PORT__', port);
+  return `<style>* {position: relative;}\n \._vc-cover {position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; background: rgba(0, 0, 255, 0.1);}</style>\n<script>\n${_code}\n</script>`;
 };
 
 export = injectCode;
