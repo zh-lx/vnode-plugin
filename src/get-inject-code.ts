@@ -1,6 +1,12 @@
 import path from 'path';
 import fs from 'fs';
-import { InjectPathName, InjectLineName, InjectColumnName } from './constant';
+import {
+  InjectPathName,
+  InjectLineName,
+  InjectColumnName,
+  InjectCoverName,
+  InjectNodeName,
+} from './constant';
 const injectFile = path.resolve(__dirname, './inject-code-template.js'); // 编译后会在lib文件夹中
 const DefaultInjectCode = fs.readFileSync(injectFile, 'utf-8');
 
@@ -24,11 +30,13 @@ const injectCode = (port, options) => {
         )
       : DefaultInjectCode;
   const _code = code
-    .replace('__FILE__', InjectPathName)
-    .replace('__LINE__', InjectLineName)
-    .replace('__COLUMN__', InjectColumnName)
-    .replace('__PORT__', port);
-  return `<style>* {position: relative;}\n \._vc-cover {position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; background: rgba(0, 0, 255, 0.1);}</style>\n<script>\n${_code}\n</script>`;
+    .replace(/__FILE__/g, InjectPathName)
+    .replace(/__LINE__/g, InjectLineName)
+    .replace(/__COLUMN__/g, InjectColumnName)
+    .replace(/__NODE__/g, InjectNodeName)
+    .replace(/__COVER__/g, InjectCoverName)
+    .replace(/__PORT__/g, port);
+  return `<div class="_vc-cover" id="_vc-cover"></div>\n<style>\._vc-cover {position: fixed; z-index: 999999; background: rgba(0, 0, 255, 0.1); overflow: hidden; white-space: normal; word-break: break-all; text-overflow: ellipsis; font-size: 12px; color: orange;}</style>\n<script>\n${_code}\n</script>`;
 };
 
 export = injectCode;
