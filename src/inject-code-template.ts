@@ -19,11 +19,13 @@ function __setCover(targetNode) {
   coverDom.style.width = `${targetLocation.width}px`;
   coverDom.style.height = `${targetLocation.height}px`;
   const file = targetNode.getAttribute('__FILE__');
-  const line = targetNode.getAttribute('__LINE__');
-  const column = targetNode.getAttribute('__COLUMN__');
   const node = targetNode.getAttribute('__NODE__');
   coverDom.onclick = function () {
-    __trackCode(file, line, column);
+    for (let key in __TRACK__KeyClickCbMap) {
+      if (__TRACK__KeyClickRecord[key] && key !== '__CODE__') {
+        __TRACK__KeyClickCbMap[key](targetNode);
+      }
+    }
   };
   coverDom.innerText = node + '\n\n' + file;
 }
@@ -42,8 +44,10 @@ function __resetCover() {
 // 显示遮罩层的定时器
 let __coverTimeout = null;
 
-function __trackCode(file, line, column) {
-  console.log('track');
+function __trackCode(targetNode) {
+  const file = targetNode.getAttribute('__FILE__');
+  const line = targetNode.getAttribute('__LINE__');
+  const column = targetNode.getAttribute('__COLUMN__');
   const url = `http://localhost:__PORT__/?file=${file}&line=${line}&column=${column}`;
   const xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
