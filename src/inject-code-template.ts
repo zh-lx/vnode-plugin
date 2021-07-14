@@ -14,10 +14,14 @@ let __KEY__DOWN__ = false;
 function __setCover(targetNode) {
   const coverDom = document.querySelector('#__COVER__') as HTMLElement;
   const targetLocation = targetNode.getBoundingClientRect();
+  const browserHeight = document.documentElement.clientHeight; // 浏览器高度
+  const browserWidth = document.documentElement.clientWidth; // 浏览器宽度
   coverDom.style.top = `${targetLocation.top}px`;
   coverDom.style.left = `${targetLocation.left}px`;
   coverDom.style.width = `${targetLocation.width}px`;
   coverDom.style.height = `${targetLocation.height}px`;
+  const bottom = browserHeight - targetLocation.top - targetLocation.height; // 距浏览器视口底部距离
+  const right = browserWidth - targetLocation.left - targetLocation.width; // 距浏览器右边距离
   const file = targetNode.getAttribute('__FILE__');
   const node = targetNode.getAttribute('__NODE__');
   coverDom.onclick = function () {
@@ -27,7 +31,24 @@ function __setCover(targetNode) {
       }
     }
   };
-  coverDom.innerText = node + '\n\n' + file;
+  const coverInfoDom = document.querySelector('#__COVERINFO__') as HTMLElement;
+  const classInfoVertical =
+    targetLocation.top > bottom
+      ? targetLocation.top < 100
+        ? '_vc-top-inner-info'
+        : '_vc-top-info'
+      : bottom < 100
+      ? '_vc-bottom-inner-info'
+      : '_vc-bottom-info';
+  const classInfoHorizon =
+    targetLocation.left >= right ? '_vc-left-info' : '_vc-right-info';
+  const classList = targetNode.classList;
+  let classListSpans = '';
+  classList.forEach((item) => {
+    classListSpans += ` <span class="_vc-node-class-name">\.${item}</span>`;
+  });
+  coverInfoDom.className = `_vc-cover-info ${classInfoHorizon} ${classInfoVertical}`;
+  coverInfoDom.innerHTML = `<div><span class="_vc-node-name">${node}</span>${classListSpans}<div/><div>${file}</div>`;
 }
 
 // 清楚遮罩层
@@ -38,7 +59,9 @@ function __resetCover() {
   coverDom.style.left = '0';
   coverDom.style.width = '0';
   coverDom.style.height = '0';
-  coverDom.innerText = '';
+  const coverInfoDom = document.querySelector('#__COVERINFO__') as HTMLElement;
+  coverInfoDom.innerHTML = '';
+  coverInfoDom.className = '';
 }
 
 // 显示遮罩层的定时器
