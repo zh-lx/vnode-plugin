@@ -9,5 +9,4 @@ declare const __TRACK__KeyClickRecord: {
 declare let __KEY__DOWN__: boolean;
 declare function __setCover(targetNode: any): void;
 declare function __resetCover(): void;
-declare let __coverTimeout: any;
 declare function __trackCode(targetNode: any): void;

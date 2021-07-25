@@ -1,16 +1,19 @@
+// 按键+点击时触发的功能映射表
 const __TRACK__KeyClickCbMap = {
   v: __trackCode,
-  __CODE__: '__CODE__CB__', // 占位符，用于替换用户自定义事件
+  __CODE__: '__CODE__CB__', // 占位识别符，用于替换用户自定义事件
 };
 
+// 记录当前是否有按键触发
 const __TRACK__KeyClickRecord = {
   v: false,
-  __CODE__: '__CODE__RECORD__', // 占位符
+  __CODE__: '__CODE__RECORD__', // 占位识别符
 };
 
+// 当前是否有按键按下
 let __KEY__DOWN__ = false;
 
-// 设置遮罩层
+// 鼠标移到有对应信息组件时，显示遮罩层
 function __setCover(targetNode) {
   const coverDom = document.querySelector('#__COVER__') as HTMLElement;
   const targetLocation = targetNode.getBoundingClientRect();
@@ -24,13 +27,6 @@ function __setCover(targetNode) {
   const right = browserWidth - targetLocation.left - targetLocation.width; // 距浏览器右边距离
   const file = targetNode.getAttribute('__FILE__');
   const node = targetNode.getAttribute('__NODE__');
-  coverDom.onclick = function () {
-    for (let key in __TRACK__KeyClickCbMap) {
-      if (__TRACK__KeyClickRecord[key] && key !== '__CODE__') {
-        __TRACK__KeyClickCbMap[key](targetNode);
-      }
-    }
-  };
   const coverInfoDom = document.querySelector('#__COVERINFO__') as HTMLElement;
   const classInfoVertical =
     targetLocation.top > bottom
@@ -51,10 +47,9 @@ function __setCover(targetNode) {
   coverInfoDom.innerHTML = `<div><span class="_vc-node-name">${node}</span>${classListSpans}<div/><div>${file}</div>`;
 }
 
-// 清楚遮罩层
+// 键盘抬起时清除遮罩层
 function __resetCover() {
   const coverDom = document.querySelector('#__COVER__') as HTMLElement;
-  coverDom.onclick = function () {};
   coverDom.style.top = '0';
   coverDom.style.left = '0';
   coverDom.style.width = '0';
@@ -63,9 +58,6 @@ function __resetCover() {
   coverInfoDom.innerHTML = '';
   coverInfoDom.className = '';
 }
-
-// 显示遮罩层的定时器
-let __coverTimeout = null;
 
 function __trackCode(targetNode) {
   const file = targetNode.getAttribute('__FILE__');
@@ -100,11 +92,6 @@ window.addEventListener('mousemove', function (e) {
   if (__KEY__DOWN__) {
     const nodePath = (e as any).path;
     let targetNode;
-    // 清除上一个定时器
-    __resetCover();
-    if (__coverTimeout) {
-      clearTimeout(__coverTimeout);
-    }
     // 寻找第一个有_vc-path属性的元素
     for (let i = 0; i < nodePath.length; i++) {
       const node = nodePath[i];
@@ -114,10 +101,35 @@ window.addEventListener('mousemove', function (e) {
       }
     }
     if (targetNode) {
-      // 设置新定时器
-      __coverTimeout = setTimeout(function () {
-        __setCover(targetNode);
-      }, 100);
+      __setCover(targetNode);
     }
   }
 });
+
+// 按下对应功能键点击页面时，在捕获阶段
+window.addEventListener(
+  'click',
+  function (e) {
+    if (__KEY__DOWN__) {
+      const nodePath = (e as any).path;
+      let targetNode;
+      // 寻找第一个有_vc-path属性的元素
+      for (let i = 0; i < nodePath.length; i++) {
+        const node = nodePath[i];
+        if (node.hasAttribute && node.hasAttribute('__FILE__')) {
+          targetNode = node;
+          break;
+        }
+      }
+      if (targetNode) {
+        e.stopPropagation();
+        for (let key in __TRACK__KeyClickCbMap) {
+          if (__TRACK__KeyClickRecord[key] && key !== '__CODE__') {
+            __TRACK__KeyClickCbMap[key](targetNode);
+          }
+        }
+      }
+    }
+  },
+  true
+);

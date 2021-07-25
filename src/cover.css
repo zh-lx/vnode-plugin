@@ -1,5 +1,6 @@
 ._vc-cover {
   position: fixed;
+  pointer-events: none;
   z-index: 999999;
   background: rgba(32, 114, 205, 0.5);
 }
