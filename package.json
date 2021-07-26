@@ -17,5 +17,6 @@
     "webpack": "^5.43.0"
   },
   "scripts": {
+    "build": "rm -rf lib && tsc && cp -r ./src/launch-editor.js ./lib && cp -r ./src/cover.css ./lib"
   }
 }
