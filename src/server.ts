@@ -16,6 +16,13 @@ export = function StartServer(callback: Function) {
     const file = params.get('file');
     const line = Number(params.get('line'));
     const column = Number(params.get('column'));
+    res.writeHead(200, {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*',
+      'Access-Control-Allow-Headers':
+        'Content-Type,XFILENAME,XFILECATEGORY,XFILESIZE,X-URL-PATH,x-access-token',
+    });
+    res.end('ok');
     launchEditor(file, line, column);
   });
 

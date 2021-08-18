@@ -6,12 +6,18 @@ const __TRACK__KeyClickCbMap = {
 
 // 记录当前是否有按键触发
 const __TRACK__KeyClickRecord = {
-  v: false,
+  v: true,
   __CODE__: '__CODE__RECORD__', // 占位识别符
 };
 
 // 当前是否有按键按下
-let __KEY__DOWN__ = false;
+let __KEY__DOWN__ = true;
+// 当前是否在拖拽
+let __is__drag = false;
+let __last_control_X = 0;
+let __last_control_Y = 0;
+let __last_pointer_X = 0;
+let __last_pointer_Y = 0;
 
 // 鼠标移到有对应信息组件时，显示遮罩层
 function __setCover(targetNode) {
@@ -133,3 +139,36 @@ window.addEventListener(
   },
   true
 );
+
+// 监听是否发生拖拽事件
+window.addEventListener('mousedown', function (e) {
+  e.preventDefault();
+  let dom = e.target as HTMLElement;
+  if (dom.id === '_vc-control') {
+    __is__drag = true;
+    __last_control_X = dom.offsetLeft;
+    __last_control_Y = dom.offsetTop;
+    __last_pointer_X = e.clientX;
+    __last_pointer_Y = e.clientY;
+  }
+});
+
+// 控制器拖拽过程
+window.addEventListener('mousemove', function (e) {
+  const control = document.getElementById('_vc-control');
+  if (__is__drag) {
+    control.style.left =
+      __last_control_X + (e.clientX - __last_pointer_X) + 'px';
+    control.style.top =
+      __last_control_Y + (e.clientY - __last_pointer_Y) + 'px';
+  }
+});
+
+// 控制器拖拽结束
+window.addEventListener('mouseup', function (e) {
+  __is__drag = false;
+  __last_control_X = 0;
+  __last_control_Y = 0;
+  __last_pointer_X = 0;
+  __last_pointer_Y = 0;
+});

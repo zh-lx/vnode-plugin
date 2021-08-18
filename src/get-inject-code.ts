@@ -41,7 +41,7 @@ const injectCode = (port, options) => {
     .replace(/__COVERINFO__/g, InjectCoverInfoName)
     .replace(/__PORT__/g, port);
 
-  return `<div class="_vc-cover" id="_vc-cover"><div id="_vc-cover-info"></div></div>\n<style>${Style}</style>\n<script>\n${_code}\n</script>`;
+  return `<div class="_vc-cover" id="_vc-cover"><div id="_vc-cover-info"></div></div><div id="_vc-control" draggable="true">V</div>\n<style>${Style}</style>\n<script>\n${_code}\n</script>`;
 };
 
 export = injectCode;
