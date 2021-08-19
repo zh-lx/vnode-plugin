@@ -1,23 +1,26 @@
 // 按键+点击时触发的功能映射表
 const __TRACK__KeyClickCbMap = {
-  v: __trackCode,
+  track: __trackCode,
   __CODE__: '__CODE__CB__', // 占位识别符，用于替换用户自定义事件
 };
 
 // 记录当前是否有按键触发
 const __TRACK__KeyClickRecord = {
-  v: true,
-  __CODE__: '__CODE__RECORD__', // 占位识别符
+  track: false,
+  __CODE__: '__CODE__RECORD__', // 占位识别符，用于替换用户自定义事件
 };
 
-// 当前是否有按键按下
-let __KEY__DOWN__ = true;
-// 当前是否在拖拽
+// 当前是否有功能开启
+let __FN_ACTIVE__ = false;
+// 当前控制器是否在拖拽
 let __is__drag = false;
+// 当前控制器位置
 let __last_control_X = 0;
 let __last_control_Y = 0;
 let __last_pointer_X = 0;
 let __last_pointer_Y = 0;
+// 控制器是否被移动了
+let __has_control_be_moved = false;
 
 // 鼠标移到有对应信息组件时，显示遮罩层
 function __setCover(targetNode) {
@@ -65,6 +68,7 @@ function __resetCover() {
   coverInfoDom.className = '';
 }
 
+// 请求本地服务端，打开vscode
 function __trackCode(targetNode) {
   const file = targetNode.getAttribute('__FILE__');
   const line = targetNode.getAttribute('__LINE__');
@@ -75,29 +79,32 @@ function __trackCode(targetNode) {
   xhr.send();
 }
 
-// 记录键盘下压
-window.addEventListener('keydown', function (e) {
-  const key = e.key;
-  if (__TRACK__KeyClickRecord[key] === false) {
-    __TRACK__KeyClickRecord[key] = true;
-    __KEY__DOWN__ = true;
+// 功能开关
+function __clickControl(e) {
+  let dom = e.target as HTMLElement;
+  if (dom.id === '_vc-control-suspension') {
+    if (__TRACK__KeyClickRecord['track']) {
+      __TRACK__KeyClickRecord['track'] = false;
+      __FN_ACTIVE__ = false;
+      dom.style.backgroundColor = 'gray';
+    } else {
+      __TRACK__KeyClickRecord['track'] = true;
+      __FN_ACTIVE__ = true;
+      dom.style.backgroundColor = 'lightgreen';
+    }
+    return false;
   }
-});
+  return true;
+}
 
-// 记录键盘抬起
-window.addEventListener('keyup', function (e) {
-  const key = e.key;
-  if (__TRACK__KeyClickRecord[key] !== undefined) {
-    __TRACK__KeyClickRecord[key] = false;
-    __KEY__DOWN__ = false;
-    __resetCover();
-  }
-});
-
+// 鼠标移动时
 window.addEventListener('mousemove', function (e) {
-  if (__KEY__DOWN__) {
+  if (__FN_ACTIVE__) {
     const nodePath = (e as any).path;
     let targetNode;
+    if (nodePath[0].id === '_vc-control-suspension') {
+      __resetCover();
+    }
     // 寻找第一个有_vc-path属性的元素
     for (let i = 0; i < nodePath.length; i++) {
       const node = nodePath[i];
@@ -116,7 +123,7 @@ window.addEventListener('mousemove', function (e) {
 window.addEventListener(
   'click',
   function (e) {
-    if (__KEY__DOWN__) {
+    if (__FN_ACTIVE__) {
       const nodePath = (e as any).path;
       let targetNode;
       // 寻找第一个有_vc-path属性的元素
@@ -144,7 +151,7 @@ window.addEventListener(
 window.addEventListener('mousedown', function (e) {
   e.preventDefault();
   let dom = e.target as HTMLElement;
-  if (dom.id === '_vc-control') {
+  if (dom.id === '_vc-control-suspension') {
     __is__drag = true;
     __last_control_X = dom.offsetLeft;
     __last_control_Y = dom.offsetTop;
@@ -155,8 +162,9 @@ window.addEventListener('mousedown', function (e) {
 
 // 控制器拖拽过程
 window.addEventListener('mousemove', function (e) {
-  const control = document.getElementById('_vc-control');
+  const control = document.getElementById('_vc-control-suspension');
   if (__is__drag) {
+    __has_control_be_moved = true;
     control.style.left =
       __last_control_X + (e.clientX - __last_pointer_X) + 'px';
     control.style.top =
@@ -171,4 +179,13 @@ window.addEventListener('mouseup', function (e) {
   __last_control_Y = 0;
   __last_pointer_X = 0;
   __last_pointer_Y = 0;
+});
+
+const __suspension_control = document.getElementById('_vc-control-suspension');
+__suspension_control.addEventListener('click', function (e) {
+  if (!__has_control_be_moved) {
+    __clickControl(e);
+  } else {
+    __has_control_be_moved = false;
+  }
 });

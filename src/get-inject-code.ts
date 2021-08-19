@@ -17,7 +17,7 @@ const injectCode = (port, options) => {
   const clickArr = [];
   const recordArr = [];
   for (let key in options) {
-    if (/^[a-z]$/.test(key) && typeof options[key] === 'function') {
+    if (key && typeof options[key] === 'function') {
       clickArr.push(`${key}: ${options[key].toString()}`);
       recordArr.push(`${key}: false`);
     }
@@ -40,8 +40,11 @@ const injectCode = (port, options) => {
     .replace(/__COVER__/g, InjectCoverName)
     .replace(/__COVERINFO__/g, InjectCoverInfoName)
     .replace(/__PORT__/g, port);
+  const controlList = `<div class="_vc-control-container">
+      <div class="_vc-control-list"></div>
+  </div>`;
 
-  return `<div class="_vc-cover" id="_vc-cover"><div id="_vc-cover-info"></div></div><div id="_vc-control" draggable="true">V</div>\n<style>${Style}</style>\n<script>\n${_code}\n</script>`;
+  return `<div class="_vc-cover" id="_vc-cover"><div id="_vc-cover-info"></div></div><div id="_vc-control-suspension" draggable="true">V</div>\n<style>${Style}</style>\n<script>\n${_code}\n</script>`;
 };
 
 export = injectCode;
