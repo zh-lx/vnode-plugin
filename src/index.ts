@@ -1,24 +1,12 @@
-import path from 'path';
-import fs from 'fs';
 import startServer from './server';
 import injectCode from './get-inject-code';
-let _options: {
-  [key: string]: Function;
-} = {};
 class TrackCodePlugin {
-  constructor(
-    options: {
-      [key: string]: Function;
-    } = {}
-  ) {
-    _options = options;
-  }
   apply(complier) {
-    complier.plugin('compilation', (compilation) => {
+    complier.hooks.compilation.tap('TrackCodePlugin', (compilation) => {
       startServer((port) => {
-        const code = injectCode(port, _options);
-        compilation.plugin(
-          'html-webpack-plugin-after-html-processing',
+        const code = injectCode(port);
+        compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tap(
+          'HtmlWebpackPlugin',
           (data) => {
             // html-webpack-plugin编译后的内容，注入代码
             data.html = data.html.replace('</body>', `${code}\n</body>`);
