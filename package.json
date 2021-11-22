@@ -1,6 +1,6 @@
 {
   "name": "vnode-plugin",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./lib/index.js",
   "repository": "git@github.com:zh-lx/vnode-plugin.git",
   "author": "zh-lx <18366276315@163.com>",

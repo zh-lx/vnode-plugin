@@ -44,9 +44,7 @@ module.exports = {
 };
 ```
 
-### 3. Mac vscode 添加环境配置
-
-mac vscode 需额外添加如下的配置，windows 及其他编辑器可忽略此步骤：
+### 3. 添加环境配置
 
 - 在项目根目录添加一个名为 `.env.local` 的文件夹，内容如下：<br>
   ```

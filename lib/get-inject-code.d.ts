@@ -1,2 +1,2 @@
-declare const injectCode: (port: any, options: any) => string;
+declare const injectCode: (port: any) => string;
 export = injectCode;
