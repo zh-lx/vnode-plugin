@@ -1,3 +1,5 @@
+该 plugin 的功能已经集成至 [webpack-vue-debug](https://github.com/zh-lx/webpack-vue-debug)，该 plugin 不再维护，请使用 [webpack-vue-debug](https://github.com/zh-lx/webpack-vue-debug)
+
 # vnode-plugin
 
 用于向 vue 项目编译后的 dom 上注入其对应编译前的代码在编辑器中位置信息的 webpack loader。<br/>
