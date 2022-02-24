@@ -1,4 +1,4 @@
-该 plugin 的功能已经集成至 [webpack-vue-debug](https://github.com/zh-lx/webpack-vue-debug)，该 plugin 不再维护，请使用 [webpack-vue-debug](https://github.com/zh-lx/webpack-vue-debug)
+<p style="color: red; font-weight: bold;">该 plugin 的功能已经集成至 [webpack-vue-debug](https://github.com/zh-lx/webpack-vue-debug)，该 plugin 不再维护，请使用 [webpack-vue-debug](https://github.com/zh-lx/webpack-vue-debug)</p>
 
 # vnode-plugin
 
